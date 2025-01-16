@@ -59,7 +59,9 @@ public class RobotContainer {
             new Vision(
                 drive::addVisionMeasurement,
                 new VisionIOPhotonVision("FcamLeft", VisionConstants.robotToCamera0),
-                new VisionIOPhotonVision("FcamRight", VisionConstants.robotToCamera1));
+                new VisionIOPhotonVision("FcamRight", VisionConstants.robotToCamera1),
+                new VisionIOPhotonVision("BcanLeft", VisionConstants.robotToCamera2),
+                new VisionIOPhotonVision("BcamRight", VisionConstants.robotToCamera3));
         break;
 
       case SIM:
@@ -77,7 +79,11 @@ public class RobotContainer {
                 new VisionIOPhotonVisionSim(
                     "FcamLeft", VisionConstants.robotToCamera0, drive::getPose),
                 new VisionIOPhotonVisionSim(
-                    "Fcamright", VisionConstants.robotToCamera1, drive::getPose));
+                    "FcamRight", VisionConstants.robotToCamera1, drive::getPose),
+                new VisionIOPhotonVisionSim(
+                    "BcamLeft", VisionConstants.robotToCamera2, drive::getPose),
+                new VisionIOPhotonVisionSim(
+                    "BcamRight", VisionConstants.robotToCamera3, drive::getPose));
         break;
 
       default:
@@ -89,7 +95,13 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
-        vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
+        vision =
+            new Vision(
+                drive::addVisionMeasurement,
+                new VisionIO() {},
+                new VisionIO() {},
+                new VisionIO() {},
+                new VisionIO() {});
         break;
     }
 

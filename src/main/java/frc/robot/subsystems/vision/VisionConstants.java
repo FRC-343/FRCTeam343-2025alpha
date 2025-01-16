@@ -1,27 +1,15 @@
-// Copyright 2021-2025 FRC 6328
-// http://github.com/Mechanical-Advantage
-//
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// version 3 as published by the Free Software Foundation or
-// available in the root directory of this project.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU General Public License for more details.
-
 package frc.robot.subsystems.vision;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.util.Units;
 
 public class VisionConstants {
   // AprilTag layout
   public static AprilTagFieldLayout aprilTagLayout =
-      AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
+      AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
 
   // Camera names, must match names configured on coprocessor
   public static String camera0Name = "FcamLeft";
@@ -30,16 +18,31 @@ public class VisionConstants {
   public static String camera3Name = "BcamRight";
 
   // Robot to camera transforms
-  // (Not used by Limelight, configure in web UI instead)
+  // This is Camera centered IE instead of XYZ its YXZ for the Transform
   public static Transform3d robotToCamera0 =
-      new Transform3d(0.2, 0.0, 0.2, new Rotation3d(0.0, -0.4, 0.0));
+      new Transform3d( // Front left
+          Units.inchesToMeters(10.713),
+          Units.inchesToMeters(11.466),
+          Units.inchesToMeters(8.055),
+          new Rotation3d(0.0, Units.degreesToRadians(-30), Units.degreesToRadians(-45)));
   public static Transform3d robotToCamera1 =
-      new Transform3d(-0.2, 0.0, 0.2, new Rotation3d(0.0, -0.4, Math.PI));
+      new Transform3d( // Front Right
+          Units.inchesToMeters(10.713),
+          Units.inchesToMeters(-11.466),
+          Units.inchesToMeters(8.055),
+          new Rotation3d(0.0, Units.degreesToRadians(-30), Units.degreesToRadians(45)));
   public static Transform3d robotToCamera2 =
-      new Transform3d(0, 0, 0, new Rotation3d(0, 0, 0)); // Placeholder values
+      new Transform3d( // Back left
+          Units.inchesToMeters(-10.713),
+          Units.inchesToMeters(11.466),
+          Units.inchesToMeters(8.055),
+          new Rotation3d(0.0, Units.degreesToRadians(-30), Units.degreesToRadians(180 - 45)));
   public static Transform3d robotToCamera3 =
-      new Transform3d(0, 0, 0, new Rotation3d(0, 0, 0)); // Placeholder values
-
+      new Transform3d( // Back Right
+          Units.inchesToMeters(-10.713),
+          Units.inchesToMeters(-11.466),
+          Units.inchesToMeters(8.055),
+          new Rotation3d(0.0, Units.degreesToRadians(-30), Units.degreesToRadians(180 + 45)));
   // Basic filtering thresholds
   public static double maxAmbiguity = 0.3;
   public static double maxZError = 0.75;

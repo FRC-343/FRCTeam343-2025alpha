@@ -331,6 +331,7 @@ public class Drive extends SubsystemBase {
       Matrix<N3, N1> visionMeasurementStdDevs) {
     poseEstimator.addVisionMeasurement(
         visionRobotPoseMeters, timestampSeconds, visionMeasurementStdDevs);
+    Logger.recordOutput("Vision Pose", visionRobotPoseMeters);
   }
 
   /** Returns the maximum linear speed in meters per sec. */
