@@ -15,38 +15,41 @@ import java.util.Set;
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 
-public class PositionWithCoralStation extends Command {
-  private static double yawMeasurementOffset = 0; // To aim from the back
-  private final PIDController xController = new PIDController(5, 0, 0);
-  private final PIDController thetaController = new PIDController(4, 0, 0.1);
+public class PositionWithReef extends Command {
+  private static double yawMeasurementOffset = Math.PI; // To aim from the back
+  private final PIDController xController = new PIDController(1, 0, 0);
+  private final PIDController thetaController = new PIDController(5, 0, 0.1);
   private final String logRoot;
 
   private final Drive drive;
-  private final OffsetTags offsetTag;
+  private final OffsetTags tag;
   // private final DoubleSupplier xSupplier;
   private final DoubleSupplier ySupplier;
 
+  private Pose3d tagPose = new Pose3d();
   private Pose3d targetPose = new Pose3d();
   private boolean hasSeenTag = false;
 
-  public PositionWithCoralStation(DoubleSupplier ySupplier, Drive drive, OffsetTags offsetTag) {
+  public PositionWithReef(DoubleSupplier ySupplier, Drive drive, OffsetTags tag) {
     addRequirements(drive);
-    setName("PositionWithCoralStation");
+    setName("PositionWithReef");
 
     logRoot = "Commands/" + getName() + "/";
 
     this.ySupplier = ySupplier;
+    this.tag = tag;
     this.drive = drive;
-    this.offsetTag = offsetTag;
 
-    targetPose = offsetTag.getOffsetPose();
-
+    xController.setTolerance(0.1);
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
   }
 
   @Override
   public void initialize() {
     drive.runVelocity(new ChassisSpeeds());
+
+    tagPose = tag.getPose();
+    targetPose = tag.getOffsetPose();
 
     Logger.recordOutput(logRoot + "IsRunning", true);
   }
@@ -56,7 +59,7 @@ public class PositionWithCoralStation extends Command {
     Pose3d robotPose = new Pose3d(drive.getPose());
 
     Set<TargetWithSource> targets = BobotState.getVisibleAprilTags();
-    AprilTagAlgorithms.filterTags(targets.stream(), offsetTag.getId())
+    AprilTagAlgorithms.filterTags(targets.stream(), tag.getId())
         .reduce(
             (targetWithSourceA, targetWithSourceB) ->
                 targetWithSourceA.target().getPoseAmbiguity()
@@ -66,28 +69,22 @@ public class PositionWithCoralStation extends Command {
         .ifPresent(
             targetWithSource -> {
               hasSeenTag = true;
-              Pose3d tagPose = targetWithSource.getTargetPoseFrom(robotPose);
-              Logger.recordOutput(logRoot + "TagPose", tagPose);
-              targetPose = offsetTag.getOffsetPoseFrom(tagPose);
+              tagPose = targetWithSource.getTargetPoseFrom(robotPose);
+              targetPose = tag.getOffsetPoseFrom(tagPose);
             });
 
-    double xErrorMeters = targetPose.getX() - robotPose.getX();
-    double rotationSpeedRad;
-    if (Math.abs(xErrorMeters) < 1.0) {
-      double yawErrorRad =
-          targetPose.toPose2d().getRotation().getRadians()
-              - robotPose.toPose2d().getRotation().getRadians();
-      rotationSpeedRad = thetaController.calculate(yawMeasurementOffset, yawErrorRad);
-    } else {
-      rotationSpeedRad =
-          thetaController.calculate(
-              drive.getPose().getRotation().getRadians(), yawMeasurementOffset);
-    }
+    double yawErrorRad =
+        tagPose.relativeTo(robotPose).getTranslation().toTranslation2d().getAngle().getRadians();
+    double rotationSpeedRad = thetaController.calculate(yawMeasurementOffset, yawErrorRad);
 
-    double xSpeedMeters = MathUtil.clamp(xController.calculate(0, xErrorMeters), -4.06, 4.06);
+    double xSpeedMeters =
+        MathUtil.clamp(xController.calculate(robotPose.getX(), targetPose.getX()), -4.06, 4.06);
 
-    Logger.recordOutput(logRoot + "TargetID", offsetTag.getId());
+    Logger.recordOutput(logRoot + "TargetID", tag.getId());
+    Logger.recordOutput(logRoot + "TagPose", tagPose);
+    Logger.recordOutput(logRoot + "TagPose2d", tagPose.toPose2d());
     Logger.recordOutput(logRoot + "TargetPose", targetPose);
+    Logger.recordOutput(logRoot + "TargetPose2d", targetPose.toPose2d());
     Logger.recordOutput(logRoot + "HasSeenTarget", hasSeenTag);
     Logger.recordOutput(logRoot + "RotationSpeed", rotationSpeedRad);
 

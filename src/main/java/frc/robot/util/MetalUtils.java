@@ -2,25 +2,34 @@ package frc.robot.util;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import frc.robot.subsystems.vision.OffsetTags;
 import frc.robot.subsystems.vision.VisionConstants;
 // import frc.robot.Constants.PathPlannerConstants;
 
-public class GarageUtils {
+public class MetalUtils {
   /** Simpler way to get current alliance, or return our predetermined "DEFAULT" alliance. */
   public static Alliance getAlliance() {
     return DriverStation.getAlliance().isPresent() ? DriverStation.getAlliance().get() : null;
   }
 
   public static boolean isBlueAlliance() {
-    return GarageUtils.getAlliance() == Alliance.Blue;
+    return MetalUtils.getAlliance() == Alliance.Blue;
   }
 
   public static boolean isRedAlliance() {
-    return GarageUtils.getAlliance() == Alliance.Red;
+    return MetalUtils.getAlliance() == Alliance.Red;
   }
 
   public static double getFlipped() {
-    return GarageUtils.isRedAlliance() ? -1 : 1;
+    return MetalUtils.isRedAlliance() ? -1 : 1;
+  }
+
+  public static int getStation() {
+    if (DriverStation.getAlliance().isPresent() == true){
+    return DriverStation.getLocation().getAsInt();
+    }else {
+      return 4;
+    }
   }
 
   public static double percentWithSoftStops(
@@ -31,8 +40,22 @@ public class GarageUtils {
   }
 
   public static int getREEFTag() {
-    return GarageUtils.isBlueAlliance()
+    return MetalUtils.isBlueAlliance()
         ? VisionConstants.BLUE_REEF_ONE
         : VisionConstants.RED_REEF_ONE;
+  }
+
+  public static OffsetTags getCoralTag() {
+    if (MetalUtils.getStation() == 1) {
+      return OffsetTags.CORAL_ONE;
+    }
+    if (MetalUtils.getStation() == 2) {
+      return OffsetTags.CORAL_ONE;
+    }
+    if (MetalUtils.getStation() == 3) {
+      return OffsetTags.CORAL_TWO;
+    } else {
+      return OffsetTags.CORAL_ONE;
+    }
   }
 }

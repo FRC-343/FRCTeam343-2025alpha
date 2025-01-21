@@ -7,7 +7,7 @@ import edu.wpi.first.util.WPIUtilJNI;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.drive.Drive;
-import frc.robot.util.GarageUtils;
+import frc.robot.util.MetalUtils;
 import frc.robot.util.SwerveUtils;
 import java.util.function.DoubleSupplier;
 
@@ -113,7 +113,7 @@ public class TeleopDrive {
 
     // Convert to field relative speeds & send command
     // (Copied from AdvantageKit example projects)
-    boolean isFlipped = GarageUtils.isRedAlliance();
+    boolean isFlipped = MetalUtils.isRedAlliance();
 
     // Convert the commanded speeds into the correct units for the drivetrain
     double xSpeedDelivered = xSpeedCommanded * 4.06;

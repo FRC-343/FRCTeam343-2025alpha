@@ -22,36 +22,12 @@ public enum OffsetTags {
       VisionConstants.BLUE_CORAL_TWO,
       1.0,
       new Rotation3d(0, 0, Math.PI)),
-  REEF_ONE(
-      VisionConstants.RED_REEF_ONE,
-      VisionConstants.BLUE_REEF_ONE,
-      1.0,
-      new Rotation3d(0, 0, Math.PI)),
-  REEF_TWO(
-      VisionConstants.RED_REEF_TWO,
-      VisionConstants.BLUE_REEF_TWO,
-      1.0,
-      new Rotation3d(0, 0, Math.PI)),
-  REEF_THREE(
-      VisionConstants.RED_REEF_THREE,
-      VisionConstants.BLUE_REEF_THREE,
-      1.0,
-      new Rotation3d(0, 0, Math.PI)),
-  REEF_FOUR(
-      VisionConstants.RED_REEF_FOUR,
-      VisionConstants.BLUE_REEF_FOUR,
-      1.0,
-      new Rotation3d(0, 0, Math.PI)),
-  REEF_FIVE(
-      VisionConstants.RED_REEF_FIVE,
-      VisionConstants.BLUE_REEF_FIVE,
-      1.0,
-      new Rotation3d(0, 0, Math.PI)),
-  REEF_SIX(
-      VisionConstants.RED_REEF_SIX,
-      VisionConstants.BLUE_REEF_SIX,
-      1.0,
-      new Rotation3d(0, 0, Math.PI)),
+  REEF_ONE(VisionConstants.RED_REEF_ONE, VisionConstants.BLUE_REEF_ONE, 1.0),
+  REEF_TWO(VisionConstants.RED_REEF_TWO, VisionConstants.BLUE_REEF_TWO, 1.0),
+  REEF_THREE(VisionConstants.RED_REEF_THREE, VisionConstants.BLUE_REEF_THREE, 1.0),
+  REEF_FOUR(VisionConstants.RED_REEF_FOUR, VisionConstants.BLUE_REEF_FOUR, 1.0),
+  REEF_FIVE(VisionConstants.RED_REEF_FIVE, VisionConstants.BLUE_REEF_FIVE, 1.0),
+  REEF_SIX(VisionConstants.RED_REEF_SIX, VisionConstants.BLUE_REEF_SIX, 1.0),
   PROCESSOR(
       VisionConstants.RED_PROCESSOR,
       VisionConstants.BLUE_PROCESSOR,
