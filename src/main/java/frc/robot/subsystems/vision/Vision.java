@@ -7,21 +7,28 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.vision.VisionIO.PoseObservationType;
+import frc.robot.subsystems.vision.VisionIO.VisionIOInputs;
 import java.util.LinkedList;
 import java.util.List;
 import org.littletonrobotics.junction.Logger;
+import org.photonvision.EstimatedRobotPose;
+import org.photonvision.targeting.PhotonTrackedTarget;
 
 public class Vision extends SubsystemBase {
   private final VisionConsumer consumer;
   private final VisionIO[] io;
   private final VisionIOInputsAutoLogged[] inputs;
   private final Alert[] disconnectedAlerts;
+
+  public static record VisionMeasurement(
+      EstimatedRobotPose estimation, Matrix<N3, N1> confidence) {}
 
   public Vision(VisionConsumer consumer, VisionIO... io) {
     this.consumer = consumer;
@@ -49,6 +56,19 @@ public class Vision extends SubsystemBase {
    */
   public Rotation2d getTargetX(int cameraIndex) {
     return inputs[cameraIndex].latestTargetObservation.tx();
+  }
+
+  public static record TargetWithSource(PhotonTrackedTarget target, VisionIOInputs placeHolder) {
+    public Transform3d getRobotToTarget() {
+      Transform3d cameraToTarget = target.getBestCameraToTarget();
+      Transform3d robotToCamera = VisionIOInputs.robotToCamera;
+      Transform3d robotToTarget = robotToCamera.plus(cameraToTarget);
+      return robotToTarget;
+    }
+
+    public Pose3d getTargetPoseFrom(Pose3d poseOrigin) {
+      return poseOrigin.transformBy(getRobotToTarget());
+    }
   }
 
   @Override

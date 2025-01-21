@@ -7,8 +7,8 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.bobot_state.BobotState;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
@@ -22,6 +22,7 @@ import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
+import frc.robot.util.CommandCustomController;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -37,9 +38,13 @@ public class RobotContainer {
   @SuppressWarnings("unused")
   private final Vision vision;
 
-  // Controller
-  private final CommandXboxController controller = new CommandXboxController(0);
+  @SuppressWarnings("unused")
+  private final BobotState m_BobotState;
 
+  // Controller
+  private final CommandCustomController controller = new CommandCustomController(0);
+
+  private final DriverAutomationFactory m_Automation;
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
 
@@ -62,6 +67,9 @@ public class RobotContainer {
                 new VisionIOPhotonVision("FcamRight", VisionConstants.robotToCamera1),
                 new VisionIOPhotonVision("BcanLeft", VisionConstants.robotToCamera2),
                 new VisionIOPhotonVision("BcamRight", VisionConstants.robotToCamera3));
+        m_BobotState = new BobotState();
+        m_Automation = new DriverAutomationFactory(controller, null, drive);
+
         break;
 
       case SIM:
@@ -84,6 +92,10 @@ public class RobotContainer {
                     "BcamLeft", VisionConstants.robotToCamera2, drive::getPose),
                 new VisionIOPhotonVisionSim(
                     "BcamRight", VisionConstants.robotToCamera3, drive::getPose));
+
+        m_BobotState = new BobotState();
+        m_Automation = new DriverAutomationFactory(controller, null, drive);
+
         break;
 
       default:
@@ -102,6 +114,9 @@ public class RobotContainer {
                 new VisionIO() {},
                 new VisionIO() {},
                 new VisionIO() {});
+        m_BobotState = new BobotState();
+        m_Automation = new DriverAutomationFactory(controller, null, drive);
+
         break;
     }
 
@@ -166,6 +181,8 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
                 .ignoringDisable(true));
+
+    controller.y().whileTrue(m_Automation.LeftCoralPath());
   }
 
   /**

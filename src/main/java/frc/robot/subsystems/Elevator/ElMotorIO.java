@@ -2,7 +2,6 @@ package frc.robot.subsystems.Elevator;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import frc.robot.subsystems.drive.ModuleIO.ModuleIOInputs;
-
 import org.littletonrobotics.junction.AutoLog;
 
 public interface ElMotorIO {
@@ -24,7 +23,7 @@ public interface ElMotorIO {
     public Rotation2d extentionAbsPos = new Rotation2d();
     public Rotation2d extentionPos = new Rotation2d();
   }
-    /** Updates the set of loggable inputs. */
+  /** Updates the set of loggable inputs. */
   public default void updateInputs(ModuleIOInputs inputs) {}
 
   /** Run the drive motor at the specified open loop value. */
